@@ -20,7 +20,7 @@ export default function SwpCalculator() {
   const [corpus, setCorpus] = useState("10000000");
   const [firstWithdrawal, setFirstWithdrawal] = useState("50000");
   const [escalationPct, setEscalationPct] = useState("7");
-  const [annualReturnPct, setAnnualReturnPct] = useState("8");
+  const [annualReturnPct, setAnnualReturnPct] = useState("12");
   const [years, setYears] = useState("20");
 
   const [result, setResult] = useState(null);
