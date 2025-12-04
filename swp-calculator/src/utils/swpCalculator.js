@@ -1,12 +1,3 @@
-// src/utils/swpCalculator.js
-// simulateEscalatingWithdrawal:
-// - corpus: number (initial corpus, e.g. 10000000)
-// - firstWithdrawal: number (year 1 withdrawal, e.g. 50000)
-// - escalationPct: number (annual increase in withdrawal, e.g. 7 for 7%)
-// - annualReturnPct: number (annual portfolio return, e.g. 8 for 8%)
-// - years: integer (number of years to simulate)
-//
-// Returns an object with rows (per year), totalWithdrawn, finalBalance
 
 export function simulateEscalatingWithdrawal({
   corpus,

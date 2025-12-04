@@ -7,25 +7,52 @@ function formatN(n) {
   return n?.toLocaleString("en-IN", { maximumFractionDigits: 2 }) ?? "-";
 }
 
+// helper to parse numeric input strings safely
+const parseOrDefault = (str, fallback = 0) => {
+  if (str === "" || str == null) return fallback;
+  const n = Number(str);
+  return Number.isFinite(n) ? n : fallback;
+};
+
 export default function SipCalculator() {
-  const [monthlySip, setMonthlySip] = useState(10000);
-  const [annualReturnPct, setAnnualReturnPct] = useState(12);
-  const [years, setYears] = useState(10);
-  const [escalationPct, setEscalationPct] = useState(10); // NEW FIELD
+  // store inputs as strings so they can be empty
+  const [monthlySip, setMonthlySip] = useState("10000");
+  const [annualReturnPct, setAnnualReturnPct] = useState("12");
+  const [years, setYears] = useState("10");
+  const [escalationPct, setEscalationPct] = useState("10");
+
   const [res, setRes] = useState(null);
+  const [error, setError] = useState("");
 
   const run = (e) => {
     e?.preventDefault();
+    setError("");
+
+    // parse values here, don't overwrite the input strings
+    const parsedMonthly = parseOrDefault(monthlySip, 0);
+    const parsedReturn = parseOrDefault(annualReturnPct, 0);
+    const parsedYears = Math.max(0, Math.floor(parseOrDefault(years, 0)));
+    const parsedEsc = parseOrDefault(escalationPct, 0);
+
+    // optional validation: require years > 0
+    if (parsedYears <= 0) {
+      setError("Please enter a valid number of years (> 0).");
+      setRes(null);
+      return;
+    }
+
     const out = simulateSIP({
-      monthlySip,
-      annualReturnPct,
-      years,
-      escalationPct, // pass into function
+      monthlySip: parsedMonthly,
+      annualReturnPct: parsedReturn,
+      years: parsedYears,
+      escalationPct: parsedEsc,
     });
+
     setRes(out);
   };
 
-  React.useEffect(() => { run(); }, []);
+  // initial run using default string values
+  React.useEffect(() => { run(); /* eslint-disable-next-line react-hooks/exhaustive-deps */ }, []);
 
   return (
     <div>
@@ -43,44 +70,51 @@ export default function SipCalculator() {
         <label>
           Monthly SIP (₹)
           <input
-            type="number"
+            type="text"
+            placeholder="e.g. 10000"
             value={monthlySip}
-            onChange={(e) => setMonthlySip(Number(e.target.value))}
+            onChange={(e) => setMonthlySip(e.target.value)}
           />
         </label>
 
         <label>
           Annual return %
           <input
-            type="number"
+            type="text"
+            placeholder="e.g. 12"
             value={annualReturnPct}
-            onChange={(e) => setAnnualReturnPct(Number(e.target.value))}
+            onChange={(e) => setAnnualReturnPct(e.target.value)}
           />
         </label>
 
         <label>
           Years
           <input
-            type="number"
+            type="text"
+            placeholder="e.g. 10"
             value={years}
-            onChange={(e) => setYears(Number(e.target.value))}
+            onChange={(e) => setYears(e.target.value)}
           />
         </label>
 
-        {/* ⭐ NEW INPUT — Escalation % per year */}
         <label>
           SIP Escalation % p.a.
           <input
-            type="number"
+            type="text"
+            placeholder="e.g. 10"
             value={escalationPct}
-            onChange={(e) => setEscalationPct(Number(e.target.value))}
+            onChange={(e) => setEscalationPct(e.target.value)}
           />
         </label>
 
         <div style={{ alignSelf: "end" }}>
-          <button type="submit" style={{ padding: "8px 14px" }}>Run</button>
+          <button type="submit" style={{ padding: "8px 14px" }}>
+            Run
+          </button>
         </div>
       </form>
+
+      {error && <div style={{ color: "salmon", marginBottom: 12 }}>{error}</div>}
 
       {res && (
         <>
@@ -88,7 +122,7 @@ export default function SipCalculator() {
             initial={0}
             totalWithdrawn={res.totalInvested}
             finalBalance={res.maturityValue}
-            years={years}
+            years={res.years}
             labelTotal="Total invested"
           />
 
@@ -105,19 +139,9 @@ export default function SipCalculator() {
               {res.yearly.map((y) => (
                 <tr key={y.year}>
                   <td style={{ padding: 6 }}>{y.year}</td>
-
-                  {/* NEW: show SIP amount for that year */}
-                  <td style={{ padding: 6, textAlign: "right" }}>
-                    {formatN(y.monthlySipStartOfYear)}
-                  </td>
-
-                  <td style={{ padding: 6, textAlign: "right" }}>
-                    {formatN(y.invested)}
-                  </td>
-
-                  <td style={{ padding: 6, textAlign: "right" }}>
-                    {formatN(y.endValue)}
-                  </td>
+                  <td style={{ padding: 6, textAlign: "right" }}>{formatN(y.monthlySipStartOfYear)}</td>
+                  <td style={{ padding: 6, textAlign: "right" }}>{formatN(y.invested)}</td>
+                  <td style={{ padding: 6, textAlign: "right" }}>{formatN(y.endValue)}</td>
                 </tr>
               ))}
             </tbody>

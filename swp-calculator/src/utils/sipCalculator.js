@@ -1,15 +1,4 @@
-// src/utils/sipCalculator.js
-// simulateSIP with annual escalation of monthly SIP
-// Inputs:
-// - monthlySip: number (initial monthly SIP amount)
-// - annualReturnPct: number (annual portfolio return, e.g. 12)
-// - years: integer (number of years to simulate)
-// - escalationPct: number (annual % increase in monthly SIP, e.g. 10 for 10%)
-//
-// Behavior:
-// - Each year, monthly SIP for that entire year is the current monthlySip value.
-// - At the end of the year (before next year begins) monthlySip is increased by escalationPct.
-// - Returns yearly breakdown, totalInvested and maturityValue.
+
 
 export function simulateSIP({
   monthlySip = 0,
