@@ -1,0 +1,177 @@
+/* ========== Global Dark Theme ========== */
+
+:root {
+  --bg: #121212;
+  --bg-card: #1e1e1e;
+  --bg-hover: #2a2a2a;
+  --text: #e5e5e5;
+  --text-muted: #9b9b9b;
+  --primary: #4dabf7;
+  --primary-hover: #74c0fc;
+  --border: #2e2e2e;
+  --radius: 8px;
+}
+
+body {
+  margin: 0;
+  padding: 28px;
+  font-family: Inter, Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+
+/* Containers */
+main, header {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+/* Headings */
+h1, h2, h3 {
+  margin-top: 0;
+  color: var(--text);
+}
+
+/* Paragraphs */
+p {
+  color: var(--text-muted);
+}
+
+/* Buttons */
+button {
+  background: var(--primary);
+  color: #c9c5c5;
+  border: none;
+  padding: 10px 16px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-size: 14px;
+  transition: 0.2s ease;
+}
+
+button:hover {
+  background: var(--primary-hover);
+}
+
+button:active {
+  transform: scale(0.96);
+}
+
+/* Inputs */
+input {
+  width: 100%;
+  padding: 10px;
+  margin-top: 6px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text);
+  font-size: 14px;
+}
+
+input:focus {
+  outline: none;
+  border-color: var(--primary);
+}
+
+/* Labels */
+label {
+  display: block;
+  font-size: 14px;
+  color: var(--text);
+}
+
+/* Cards */
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  padding: 16px;
+  border-radius: var(--radius);
+}
+
+/* Summary Boxes */
+.summary-box {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  padding: 14px;
+  border-radius: var(--radius);
+}
+
+.summary-box div:first-child {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.summary-box div:last-child {
+  font-size: 18px;
+  font-weight: bold;
+  margin-top: 4px;
+}
+
+/* Tables */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+thead {
+  background: #1a1a1a;
+}
+
+th {
+  padding: 12px 6px;
+  text-align: left;
+  font-size: 13px;
+  border-bottom: 1px solid var(--border);
+  color: var(--primary);
+}
+
+td {
+  padding: 10px 6px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text);
+  font-size: 14px;
+}
+
+tr:hover td {
+  background: var(--bg-hover);
+}
+
+/* Home Page Cards */
+.home-card {
+  background: var(--bg-card);
+  padding: 16px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  transition: 0.2s;
+  width: 260px;
+}
+
+.home-card:hover {
+  background: var(--bg-hover);
+  border-color: var(--primary);
+}
+
+/* Navigation Buttons */
+header button {
+  margin-right: 8px;
+}
+
+header button.active {
+  background: var(--primary-hover);
+  color: #000;
+}
+
+/* Layout Utility */
+.flex {
+  display: flex;
+  gap: 12px;
+}
+
+.grid {
+  display: grid;
+  gap: 12px;
+}
