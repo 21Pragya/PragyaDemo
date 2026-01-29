@@ -4,6 +4,7 @@ import Header from "./components/Header";
 import Home from "./pages/Home";
 import SwpCalculator from "./pages/SwpCalculator";
 import SipCalculator from "./pages/SipCalculator";
+import LumpSumCalculator from "./pages/ValueCalculator";
 import "./styles.css"
 
 export default function App() {
@@ -17,6 +18,7 @@ export default function App() {
         {route === "home" && <Home onNavigate={setRoute} />}
         {route === "swp" && <SwpCalculator />}
         {route === "sip" && <SipCalculator />}
+        {route === "value" && <LumpSumCalculator />}
       </main>
     </div>
   );

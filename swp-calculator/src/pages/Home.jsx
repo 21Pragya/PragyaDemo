@@ -19,7 +19,16 @@ export default function Home({ onNavigate = () => {} }) {
           <p>Simulate monthly SIP contributions and growth over time.</p>
           <button onClick={() => onNavigate("sip")}>Open SIP</button>
         </div>
+
+            <div style={{ padding: 12, border: "1px solid #ddd", width: 300 }}>
+  <h3>Lump Sum Calculator</h3>
+  <p>Calculate future value of a one-time investment.</p>
+  <button onClick={() => onNavigate("value")}>Open</button>
+</div>
+
       </div>
+      
+  
     </div>
   );
 }
