@@ -33,7 +33,6 @@ export default function SwpCalculator() {
   const [lsResult, setLsResult] = useState(null);
   const [lsRows, setLsRows] = useState([]);
 
-
   // ---------------- SWP RUN ----------------
   const runSwp = (e) => {
     e?.preventDefault();
@@ -58,9 +57,7 @@ export default function SwpCalculator() {
   };
 
   // ---------------- LUMP SUM RUN ----------------
-  const runLumpSum = (e) => {
-    e?.preventDefault();
-
+  const runLumpSum = () => {
     const amount = Number(lsAmount);
     const yrs = Number(lsYears);
     const esc = Number(lsEscalation);
@@ -71,16 +68,12 @@ export default function SwpCalculator() {
       escalationPct: esc,
     });
 
-    // build year-wise rows
     let value = amount;
     const rows = [];
 
     for (let y = 1; y <= yrs; y++) {
       value = value * (1 + esc / 100);
-      rows.push({
-        year: y,
-        value: +value.toFixed(2),
-      });
+      rows.push({ year: y, value: +value.toFixed(2) });
     }
 
     setLsRows(rows);
@@ -89,7 +82,6 @@ export default function SwpCalculator() {
 
   useEffect(() => {
     runSwp();
-    // eslint-disable-next-line
   }, []);
 
   const ratio =
@@ -97,17 +89,14 @@ export default function SwpCalculator() {
       ? result.finalBalance / lsResult.futureValue
       : null;
 
-    
   const ratioTimesLumpSum =
-  ratio && lsAmount
-    ? ratio * Number(lsAmount)
-    : null;
+    ratio && lsAmount ? ratio * Number(lsAmount) : null;
 
   return (
     <div>
       <h2>SWP — Escalating yearly withdrawals</h2>
 
-      {/* ---------------- SWP FORM ---------------- */}
+      {/* ---------------- COMBINED FORM ---------------- */}
       <form
         onSubmit={runSwp}
         style={{
@@ -124,17 +113,26 @@ export default function SwpCalculator() {
 
         <label>
           First year withdrawal (₹)
-          <input value={firstWithdrawal} onChange={(e) => setFirstWithdrawal(e.target.value)} />
+          <input
+            value={firstWithdrawal}
+            onChange={(e) => setFirstWithdrawal(e.target.value)}
+          />
         </label>
 
         <label>
           Escalation % p.a.
-          <input value={escalationPct} onChange={(e) => setEscalationPct(e.target.value)} />
+          <input
+            value={escalationPct}
+            onChange={(e) => setEscalationPct(e.target.value)}
+          />
         </label>
 
         <label>
           Annual return %
-          <input value={annualReturnPct} onChange={(e) => setAnnualReturnPct(e.target.value)} />
+          <input
+            value={annualReturnPct}
+            onChange={(e) => setAnnualReturnPct(e.target.value)}
+          />
         </label>
 
         <label>
@@ -142,13 +140,36 @@ export default function SwpCalculator() {
           <input value={years} onChange={(e) => setYears(e.target.value)} />
         </label>
 
-        <div style={{ alignSelf: "end" }}>
+        {/* -------- LUMP SUM INPUTS -------- */}
+        <label>
+          Lump Sum Corpus (₹)
+          <input value={lsAmount} onChange={(e) => setLsAmount(e.target.value)} />
+        </label>
+
+        <label>
+          Lump Sum Years
+          <input value={lsYears} onChange={(e) => setLsYears(e.target.value)} />
+        </label>
+
+        <label>
+          Lump Sum Return % p.a.
+          <input
+            value={lsEscalation}
+            onChange={(e) => setLsEscalation(e.target.value)}
+          />
+        </label>
+
+        <div style={{ display: "flex", gap: 8, alignSelf: "end" }}>
           <button type="submit">Run SWP</button>
+          <button type="button" onClick={runLumpSum}>
+            Run Lump Sum
+          </button>
         </div>
       </form>
 
       {error && <div style={{ color: "salmon" }}>{error}</div>}
 
+      {/* ---------------- RESULTS ---------------- */}
       {result && (
         <>
           <ResultsSummary
@@ -157,6 +178,13 @@ export default function SwpCalculator() {
             finalBalance={result.finalBalance}
             years={result.yearsSimulated}
           />
+
+          {lsResult && (
+            <div style={{ marginTop: 6 }}>
+              <strong>Lump Sum Final Value:</strong>{" "}
+              {formatN(lsResult.futureValue)}
+            </div>
+          )}
 
           <table style={{ width: "100%", borderCollapse: "collapse", marginTop: 12 }}>
             <thead>
@@ -167,6 +195,7 @@ export default function SwpCalculator() {
                 <th style={{ textAlign: "right" }}>Planned Withdrawal</th>
                 <th style={{ textAlign: "right" }}>Actual Withdrawal</th>
                 <th style={{ textAlign: "right" }}>End Balance</th>
+                <th style={{ textAlign: "right" }}>Lump Sum Value</th>
               </tr>
             </thead>
             <tbody>
@@ -178,6 +207,11 @@ export default function SwpCalculator() {
                   <td style={{ textAlign: "right" }}>{formatN(r.withdrawalPlanned)}</td>
                   <td style={{ textAlign: "right" }}>{formatN(r.withdrawalActual)}</td>
                   <td style={{ textAlign: "right" }}>{formatN(r.balanceEnd)}</td>
+                  <td style={{ textAlign: "right" }}>
+                    {lsRows[r.year - 1]
+                      ? formatN(lsRows[r.year - 1].value)
+                      : "-"}
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -185,88 +219,19 @@ export default function SwpCalculator() {
         </>
       )}
 
-      {/* ---------------- LUMP SUM SECTION ---------------- */}
-      <hr style={{ margin: "32px 0" }} />
-      <h2>Lump Sum Future Value</h2>
-
-      <form
-        onSubmit={runLumpSum}
-        style={{
-          display: "grid",
-          gap: 12,
-          gridTemplateColumns: "repeat(auto-fit, minmax(220px,1fr))",
-        }}
-      >
-        <label>
-          Corpus (₹)
-          <input value={lsAmount} onChange={(e) => setLsAmount(e.target.value)} />
-        </label>
-
-        <label>
-          Years
-          <input value={lsYears} onChange={(e) => setLsYears(e.target.value)} />
-        </label>
-
-        <label>
-          Escalation % p.a.
-          <input value={lsEscalation} onChange={(e) => setLsEscalation(e.target.value)} />
-        </label>
-
-        <div style={{ alignSelf: "end" }}>
-          <button type="submit">Calculate</button>
-        </div>
-      </form>
-
-      {lsResult && (
-        <>
-          <ResultsSummary
-            initial={lsResult.investedAmount}
-            totalWithdrawn={0}
-            finalBalance={lsResult.futureValue}
-            years={lsResult.years}
-            labelTotal="Invested Amount"
-          />
-
-          <table style={{ width: "100%", borderCollapse: "collapse", marginTop: 12 }}>
-            <thead>
-              <tr>
-                <th>Year</th>
-                <th style={{ textAlign: "right" }}>Value (₹)</th>
-              </tr>
-            </thead>
-            <tbody>
-              {lsRows.map((r) => (
-                <tr key={r.year}>
-                  <td>{r.year}</td>
-                  <td style={{ textAlign: "right" }}>{formatN(r.value)}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </>
-      )}
-
-      {/* ---------------- RATIO ---------------- */}
+      {/* ---------------- RATIO OUTPUT ---------------- */}
       {ratio && (
-        <>
-          <hr style={{ margin: "32px 0" }} />
-          <h3>Ratio</h3>
-          <p>
-            <strong>SWP Final Balance ÷ Lump Sum Final Balance =</strong>{" "}
-            {ratio.toFixed(2)}
-          </p>
-        </>
+        <div style={{ marginTop: 24 }}>
+          <strong>Ratio (SWP ÷ Lump Sum):</strong> {ratio.toFixed(2)}
+        </div>
       )}
 
       {ratioTimesLumpSum && (
-  <div style={{ marginTop: 12 }}>
-    <strong>Ratio × Lump Sum Corpus:</strong>
-    <div>{formatN(ratioTimesLumpSum)}</div>
-  </div>
-)}
-
+        <div style={{ marginTop: 8 }}>
+          <strong>Ratio × Lump Sum Corpus:</strong>{" "}
+          {formatN(ratioTimesLumpSum)}
+        </div>
+      )}
     </div>
-
-    
   );
 }
